@@ -57,15 +57,13 @@
      * ダブルクォーテーションが含まれていても問題ない形式にしています。
      */
     const excelPasteData = `
-彼はサリーをリングに買った。 He bought Sally a ring.
+彼はサリーにリングを買った。 He bought Sally a ring.
 私たちは私たちの犬をエルモと呼びます。 We call our dog Elmo.
 彼女は壁を茶色に塗りました。 She painted the wall brown.
 私はちょうどそのニュースを聞いたところです。 I have just heard the news.
 私は携帯電話をなくしてしまいました。 I have lost my cell phone.
 私はジュディのお兄さんに二度会ったことがあります。 I have met Judy's brother twice.
 彼女は3年間パリに住んでいます。 She has lived in Paris for three years.
-彼女は子供の頃から彼を知っています。 She has known him since she was a child.
-私は以前にこの映画を見たことがあります。 I have seen this movie before.
 今夜星を見ることができるでしょう。 You will be able to see the stars tonight.
 私たちはパーティーに招待されませんでした。 We were not invited to the party.
 あなたはパーティーに招待されましたか。 Were you invited to the party?
@@ -76,12 +74,8 @@
 あなたは少し寝なければならない。 You must get some sleep.
 彼女の夢は歌手になることだ。 Her dream is to be a singer.
 幸運なことに、彼には助けてくれる友人がいた。 Luckily, he had friends to help him.
-子供がここに止まるなんて危険だ。 It’s dangerous for children to stay here.
 私はあなたに明日のパーティーに来てほしい。 I want you to come to tomorrow’s party.
 彼は私に彼の席をとっておくように言った。 He told me to save a seat for him.
-彼女は私に遅れないように言った。 She told me not to be late.
-ここで写真を撮ってはいけません。 You mustn’t take pictures here.
-私は今日、歯医者に行かなければなりません。 I have to go to the dentist today.
 靴を脱ぐ必要はありません。 You don’t have to take off your shoes.
 彼は疲れているに違いない。 He must be tired.
 君はもっと気をつけるべきだ。 You should be more careful.
@@ -91,7 +85,7 @@
 私はその男性が車から降りるのを見ました。 I saw the man get out of the car.
 あなたはサリーと話している女の子を知っていますか。 Do you know the girl talking to Sally?
 彼らにはクリスという名の息子がいます。 They have a son named Chris.
-この試合はわくわくさせる試合になるでしょう。 This will be an exciting game.
+この試合はわくわくする試合になるでしょう。 This will be an exciting game.
 その電車には多くの興奮したファンがいました。 There were a lot of excited fans in the train.
 ドアを夜間は施錠したままにしておきなさい。 Keep the door locked at night.
 私はバスを待っている男性を見ました。 I saw the man waiting for a bus.
@@ -118,7 +112,7 @@
 私は9時までに家に帰らなければなりません。 I have to be home by nine.
 地球は太陽の周りを回っています。 The earth goes around the sun.
 木々の向こうに城が見えるでしょう。 A castle could be seen beyond the trees.
-木々の間に小さな家があります。 There is a small house among the trees.
+(3本以上の)木々の間に小さな家があります。 There is a small house among the trees.
 私たちは夏休みの間に韓国を訪れました。 We visited Korea during the summer vacation.
 今朝から雨が降り続いています。 It has been raining since this morning.
 その店は午後10時まで開いています。 The store is open until 10 p.m.
@@ -140,7 +134,7 @@
 私は彼女が勝つと確信している。  I'm sure that she will win.
 マリアはよくテニスをする。  Maria often plays tennis.
 リンダは多くの人からとても愛されている。  Linda is much loved by many people.
-彼はとても金持ちだと言われている。  It is said that he is rich.
+彼はとても金持ちだと言われている。  It is said that he is very rich.
 この本は2003年に書かれた。  This book was written in 2003.
 私は大学に行くことを希望します。  I hope to go to university.
 運動場では少年たちがサッカーをしていた。  There were some boys playing soccer on the field.
@@ -159,6 +153,11 @@
 図書館にいけばたいてい彼女に会えるよ。  You can usually find her in the library.
 私はその映画をまだ見ていない。  I haven't seen the movie yet.
 私はまだ彼女を愛しています。  I still love her.
+彼は今朝からずっとテレビを見続けている。  He has been watching TV since this morning.
+私は最近彼に会っていない。  I haven't seen him lately.
+今日、私にはするべきことがたくさんある。  I have a lot of things to do today.
+私はスティーブがバスを待っているのを見かけた。  I saw Steve waiting for a bus.
+私はすでにその映画を見た。  I've already seen the movie.
 `.trim();
 
     // 修正版：スペースやタブなど、どんな空白でも分割できるようにしました
