@@ -162,17 +162,18 @@
 
 // 修正版のデータ取り込み
 const rawData = excelPasteData
-    .split('\n')
-    .map(line => line.trim()) // 前後の余計な空白を消す
-    .filter(line => line !== "") // ← 【重要】空行を完全に除外する
+    .split(/\n/) // 改行で分割
+    .map(line => line.trim()) // 各行の前後の空白を消す
+    .filter(line => line.length > 0) // 【重要】中身が空の行を完全に捨てる
     .map(line => {
-        const match = line.match(/^(.+?)\s{1,}(.+)$/);
+        // 「日本語」と「英語」を分ける（最初の半角/全角スペースで分割）
+        const match = line.match(/^(.+?)[\s　]+(.+)$/);
         if (match) {
             return { q: match[1].trim(), a: match[2].trim() };
         }
         return null;
     })
-    .filter(item => item !== null);
+    .filter(item => item !== null); // 形式に合わなかった行（null）を捨てる
 
     let items = rawData.map((d, i) => ({ ...d, id: i+1, w: 100, ok: false }));
     let current = null;
