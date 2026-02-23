@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>アルティメット練習</title>
+    <style>
+        :root { --main: #333; --sub: #666; --win: #28a745; --lose: #dc3545; --bg: #f4f7f6; }
+        body { font-family: "Helvetica Neue", Arial, "Hiragino Sans", sans-serif; background: var(--bg); display: flex; justify-content: center; padding: 20px; margin: 0; }
+        .container { background: white; width: 100%; max-width: 450px; padding: 25px; border-radius: 15px; box-shadow: 0 8px 20px rgba(0,0,0,0.1); text-align: center; }
+        h1 { font-size: 1.4rem; color: var(--main); margin-bottom: 20px; }
+        
+        table { width: 100%; border-collapse: collapse; margin-bottom: 20px; table-layout: fixed; }
+        th, td { border: 2px solid #eee; padding: 25px 5px; font-size: 1.4rem; overflow-wrap: break-word; }
+        th { background: #716363; font-size: 0.8rem; padding: 10px; color: var(--sub); border: 1px solid #eee; }
+        .ans-text { font-family: "Yu Mincho", "MS Mincho", serif; font-weight: bold; font-size: 2rem; }
+        .is-hidden { color: transparent; text-shadow: 0 0 15px rgba(0,0,0,0.15); user-select: none; }
+
+        .btns { display: flex; flex-direction: column; gap: 12px; }
+        button { padding: 16px; font-size: 1.1rem; border: none; border-radius: 10px; cursor: pointer; font-weight: bold; transition: 0.2s; }
+        .btn-blue { background: #4a90e2; color: white; box-shadow: 0 4px 0 #357abd; }
+        .btn-blue:active { transform: translateY(2px); box-shadow: none; }
+        .judge-btns { display: none; gap: 12px; }
+        .btn-ok { background: var(--win); color: white; flex: 1; box-shadow: 0 4px 0 #218838; }
+        .btn-ng { background: var(--lose); color: white; flex: 1; box-shadow: 0 4px 0 #c82333; }
+        
+        .info { margin-top: 25px; font-size: 0.85rem; color: var(--sub); line-height: 1.6; background: #f8f9fa; padding: 10px; border-radius: 8px; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>アルティメット練習</h1>
+
+    <table>
+        <tr><th>問題</th><th>正解</th></tr>
+        <tr>
+            <td id="q-box">---</td>
+            <td id="a-box" class="ans-text is-hidden">？</td>
+        </tr>
+    </table>
+
+    <div class="btns">
+        <button id="show-btn" class="btn-blue" onclick="reveal()">正解を見る</button>
+        <div id="judge-box" class="judge-btns">
+            <button class="btn-ng" onclick="result(false)">× 不正解</button>
+            <button class="btn-ok" onclick="result(true)">○ 正解！</button>
+        </div>
+    </div>
+
+    <div class="info" id="info">準備中...</div>
+</div>
+
+<script>
+    /**
+     * Excelからコピーしたデータをここに貼り付けました。
+     * ダブルクォーテーションが含まれていても問題ない形式にしています。
+     */
+    const excelPasteData = `
+彼はサリーをリングに買った。 He bought Sally a ring.
+私たちは私たちの犬をエルモと呼びます。 We call our dog Elmo.
+彼女は壁を茶色に塗りました。 She painted the wall brown.
+私はちょうどそのニュースを聞いたところです。 I have just heard the news.
+私は携帯電話をなくしてしまいました。 I have lost my cell phone.
+私はジュディのお兄さんに二度会ったことがあります。 I have met Judy's brother twice.
+彼女は3年間パリに住んでいます。 She has lived in Paris for three years.
+彼女は子供の頃から彼を知っています。 She has known him since she was a child.
+私は以前にこの映画を見たことがあります。 I have seen this movie before.
+今夜星を見ることができるでしょう。 You will be able to see the stars tonight.
+質問をしてもよろしいですか? もちろんです。 May I ask you a question? Sure.
+彼は家にいるかも知れない。 He  may be at home.
+あなたはもっと睡眠をとるべきでしょう。 You must get some sleep.
+彼は疲れているに違いない。 He must  be tired.
+君はもっと気をつけるべきだ。 You should more careful.
+私たちはパーティーに招待されませんでした。 We were not invited to the party.
+あなたはパーティーに招待されましたか。 Were you invited to the party?
+パーティーはどこで開かれましたか。 Where is the party held?
+誰がパーティーに招待されましたか? Who was invited to the party.
+質問をしてもよろしいでしょうか？もちろんです。 May I ask you a question? Sure.
+彼は家にいるかもしれない。 He may be at home.
+あなたは少し寝なければならない。 You must get some sleep.
+彼女の夢は歌手になることだ。 Her dream is to be a singer.
+幸運なことに、彼には助けてくれる友人がいた。 Luckily, he had friends to help him.
+子供がここに止まるなんて危険だ。 It’s dangerous for children to stay here.
+私はあなたに明日のパーティーに来てほしい。 I want you to come to tomorrow’s party.
+彼は私に彼の席をとっておくように言った。 He told me to save a seat for him.
+彼女は私に遅れないように言った。 She told me not to be late.
+ここで写真を撮ってはいけません。 You mustn’t take pictures here.
+私は今日、歯医者に行かなければなりません。 I have to go to the dentist today.
+靴を脱ぐ必要はありません。 You don’t have to take off your shoes.
+彼は疲れているに違いない。 He must be tired.
+君はもっと気をつけるべきだ。 You should be more careful.
+母は私に部屋を掃除させました。 My mother made me clean my room.
+私はドアマンに私の荷物を運んでもらいました。 I had the doorman carry my baggage.
+父は私を映画に行かせてくれました。 My father let me go to the movies.
+私はその男性が車から降りるのを見ました。 I saw the man get out of the car.
+あなたはサリーと話している女の子を知っていますか。 Do you know the girl taking to Sally?
+彼らにはクリスという名の息子がいます。 They have a son named Chris.
+この試合はわくわくさせる試合になるでしょう。 This will be an exciting game.
+その電車には多くの興奮したファンがいました。 There were a lot of excited fans in the train.
+ドアを夜間は施錠したままにしておきなさい。 Keep the door locked at night.
+私はバスを待っている男性を見ました。 I saw the man waiting for bus.
+私はフランス語を上手にはなす女性にあった。 I met a woman who spoke French well.
+彼女は10代に人気がある小説を読んでいた。 She read a novel which was popular with teenagers.
+これが彼の書いた本です。 This is the book (which) he wrote.
+彼女は10代に人気がある小説を読んでいた。 She was reading a novel that was popular with teenagers.
+私が韓国で出会った人々は親切だった。  The people (that) I met in Korea were nice.
+これが君に話したCDです。 This is a CD which I told you about.
+彼女は彼女の妹と同じくらい上手にテニスをします。 She plays tennis as well as her sister (does).
+彼女は彼女の妹ほど上手にテニスをしません。 She doesn't play tennis as well as her sister (does).
+その写真は私を笑わせます。 The picture makes me laugh.
+その地図はあなたに駅への行き方を教えます。 The map tells you how to get the station.
+ニックは私にその日レポートを提出しなければならないと言いました。 Nick told me that I had to hand in the paper that day.
+リサは私にいつが誕生日なのか尋ねました。 Risa asked me when my birthday was.
+母は私達に音を立てないように言った。 My mother told us not to make a noise.
+夕食を食べている間に渡しの携帯電話が鳴った。 My cell phone rang while I was eating dinner.
+彼らは通りに沿って歩きました。 They walked along the street.
+彼らは通りを横切りました。 They walked across the street.
+電車はトンネルを通った。 The train went through the tunnel.
+カエルは箱の外に飛び出しました。 A frog jumped out of the box.
+彼女は駅の前で待っていた。 She was waiting in front of the station
+駅の裏に小さな公園がある。 There is a small park behind the station.
+私は9時までに家に帰らなければなりません。 I have to be home by nine.
+地球は太陽の周りを回っています。 The earth goes around the sun.
+木々の向こうに城が見えるでしょう。 A castle could be seen beyond the trees.
+木々の間に小さな家があります。 There is a small house among the trees.
+私たちは夏休みの間に韓国を訪れました。 We visited Korea during the summer vacation.
+今朝から雨が降り続いています。 It has been raining since this morning.
+その店は午後10時まで開いています。 The store is open until 10 p.m.
+私はその考えに反対です。 I'm against the idea.
+彼は自転車を壁に立てかけました。 He leaned his bike against the wall.
+私は眼鏡なしでは見えません。 I can't see without my glasses.
+彼女はファッションモデルとして働いています。 She is working as a fashion model.
+彼女は時々男の子のようにふるまいます。 She sometimes acts like a boy.
+その試合は雨のために延期されました。 The game was postponed because of the rain.
+雨にもかかわらず、彼らはビーチに行きました。 In spite of the rain, they went to the beach.
+私は彼がどこに住んでいるか知っています。 I know where he lives.
+私は彼に誰が窓を割ったのか尋ねるでしょう。 I'll ask him who broke the window.
+「少し休憩したらどうですか?」「そうだね。」 "Why don't you take a break for a few minutes?" "Right."
+私は今日新しい時計を買った。 I bought a new watch today.
+あなたの探しているCDはこれですか? Is this the CD you are looking for?
+ところで、メアリーから連絡はきましたか。 By the way, have you heard from Mary?
+「あなたはペンを持っていますか?」「ええ、持っています。」  "Do you have a pen?" "Yes, I have one."
+彼はドアを開けたままにした。  He left the door open.
+私は彼女が勝つと確信している。  I'm sure that she will win.
+マリアはよくテニスをする。  Maria often plays tennis.
+リンダは多くの人からとても愛されている。  Linda is much loved by many people.
+彼はとても金持ちだと言われている。  It is said that he is rich.
+彼はとても金持ちだと言われている。  He is said to be rich.
+私は大学に行くことを希望します。  I hope to go university.
+運動場では少年たちがサッカーをしていた。  There were some boys playing soccer on the field.
+もし明日雨が降れば、私は家にいるでしょう。  If it rains tomorrow, I will stay home.
+もし海の近くに住んでいれば、毎日泳ぎに行けるのに。  If I lived near the sea, I could go to swimming every day.
+暇があれば、君と行けるのに。  If we were free, I could go with you.
+彼の電話番号を知っていれば、彼に電話できるのに  If I knew his cellphone number, I would call him.
+彼の電話番号を知っていればなぁ  I wish I knew his cellphone number.
+彼女はもはやここで	働いていない。  She no longer works here.
+私は両親が同意しないと思います。 I don't think (that) my parents will agree.
+植物は水だけでなく太陽も必要だ。  Plants need not only water but also the sun.
+彼は英語ではなくスペイン語を話す。  He speaks not English but Spanish.
+お手伝いが必要でしたら、お声がけください。  If you need any help, please let me know.
+トムはポケットにりんごを入れていた。  Tom had an apple in his pocket.
+母はいつも忙しい。  My mother is always busy.
+図書館にいけばたいてい彼女に会えるよ。  You can usually find her in the library.
+私はその映画をまだ見ていない。  I haven't seen the movie yet.
+私はまだ彼女を愛しています。  I still love her.
+`.trim();
+
+    // 修正版：スペースやタブなど、どんな空白でも分割できるようにしました
+    const rawData = excelPasteData.split('\n').map(line => {
+        // 正規表現を使って、最初の日本語の塊と、その後の英語の塊を分けます
+        // 「日本語（スペース）英語」の形に対応
+        const match = line.match(/^(.+?)\s{1,}(.+)$/);
+        if (match) {
+            return { q: match[1].trim(), a: match[2].trim() };
+        }
+        return null;
+    }).filter(item => item !== null);
+
+    let items = rawData.map((d, i) => ({ ...d, id: i+1, w: 100, ok: false }));
+    let current = null;
+
+    function next() {
+        const totalW = items.reduce((s, i) => s + i.w, 0);
+        let r = Math.random() * totalW;
+        for (let i of items) {
+            if (r < i.w) { current = i; break; }
+            r -= i.w;
+        }
+
+        document.getElementById('q-box').innerText = current.q;
+        document.getElementById('a-box').innerText = current.a;
+        document.getElementById('a-box').classList.add('is-hidden');
+        document.getElementById('show-btn').style.display = "block";
+        document.getElementById('judge-box').style.display = "none";
+        updateInfo();
+    }
+
+    function reveal() {
+        document.getElementById('a-box').classList.remove('is-hidden');
+        document.getElementById('show-btn').style.display = "none";
+        document.getElementById('judge-box').style.display = "flex";
+    }
+
+    function result(isOk) {
+        if (isOk) {
+            current.w = 1;
+            current.ok = true;
+        } else {
+            current.w += 200;
+        }
+        next();
+    }
+
+    function updateInfo() {
+        const okCount = items.filter(i => i.ok).length;
+        document.getElementById('info').innerHTML = 
+            `進捗: ${okCount} / ${items.length} 問マスター<br>` +
+            `<small>※未出題・不正解の問題が優先されます</small>`;
+    }
+
+    next();
+</script>
+</body>
+</html>
